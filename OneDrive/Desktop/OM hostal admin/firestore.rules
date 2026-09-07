@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Students collection
+    match /students/{studentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Monthly fees collection
+    match /monthlyFees/{feeId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Payments collection
+    match /payments/{paymentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Receipts collection
+    match /receipts/{receiptId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Rooms collection
+    match /rooms/{roomId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Settings collection
+    match /settings/{settingId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Dashboard stats collection
+    match /dashboardStats/{statId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Counters collection (used for receipt numbers)
+    match /counters/{counterId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Audit logs - write-only / append-only, read allowed for authenticated admins
+    match /auditLogs/{logId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if false; // immutable audit trail
+    }
+  }
+}
